@@ -22,6 +22,9 @@ H = canvas.height = 400;
 // create a context
 pen = canvas.getContext('2d');
 
+game_over = false;
+won = false;
+
  e1 = {
   x:150,
   y:50,
@@ -55,6 +58,7 @@ speed:20,
         h:60,
         speed:20,
         moving:false,
+        health:100,
     };
 
     gem={
@@ -76,9 +80,21 @@ speed:20,
         player.moving = false;
     });
 
+}
 
+function detectCollision(playerA,enemyA)
+{
+   
+        if(playerA.x<enemyA.x+enemyA.w &&
+            playerA.x+playerA.w>enemyA.x &&
+            playerA.y<enemyA.y+enemyA.h &&
+            playerA.y+playerA.h>enemyA.y)
+            {
+                // collision detected
+                return true;
+            }
 
-
+    return false;
 }
 
 function draw()
@@ -87,7 +103,7 @@ function draw()
     // clear the canvas area for the old frame
     pen.clearRect(0, 0, W, H);
    
-   pen.fillStyle = "red";
+   
 //    pen.fillRect(box.x,box.y,box.w,box.h);
     // pen.drawImage(enemy_image,box.x, box.y, box.w, box.h);
 
@@ -101,6 +117,10 @@ function draw()
     {
         pen.drawImage(enemy_image,enemy[i].x,enemy[i].y,enemy[i].w,enemy[i].h);
     }
+
+    pen.fillStyle = "red";
+    pen.font = "30px Roboto";
+    pen.fillText("Score : "+player.health,10,25);
 }
 
 function update()
@@ -110,6 +130,34 @@ function update()
     if(player.moving==true)
     {
         player.x += player.speed;
+        player.health += 20;
+    }
+
+    // overlap
+    if(detectCollision(player,gem))
+    {
+        // console.log("You won the game");
+        game_over = true;
+        won = true;
+        return;
+    }
+
+    for(var i=0;i<enemy.length;i++)
+    {
+        if(detectCollision(player,enemy[i]))
+        {
+            
+            player.health -= 50;
+
+            if(player.health<0)
+            {
+                   // console.log("You lost the game");
+                game_over = true;
+               
+            }
+            
+            
+        }
     }
 
     //  move the box downwards and upwards
@@ -126,7 +174,22 @@ function update()
 }
 
 function gameloop()
-{
+{ 
+
+    if(game_over==true)
+    {  
+        clearInterval(f);
+        if(won==true)
+        {
+            alert("You Won!");
+        }
+        else 
+        {  
+
+            alert("Game Over ! Your health : "+player.health);
+        }
+
+    }
   draw();
   update();
   console.log("In gameloop");
