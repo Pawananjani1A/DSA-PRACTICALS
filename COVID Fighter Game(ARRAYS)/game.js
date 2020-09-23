@@ -4,6 +4,12 @@ function load_images()
     enemy_image = new Image();
     enemy_image.src = "Assets/v1.png";
 
+    player_image = new Image();
+    player_image.src = "Assets/superhero.png";
+
+    gem_image = new Image();
+    gem_image.src = "Assets/gem.png";
+
 }
 
 function init()
@@ -42,6 +48,36 @@ speed:20,
 
     enemy = [e1,e2,e3];
 
+    player = {
+        x:20,
+        y:H/2-15,
+        w:60,
+        h:60,
+        speed:20,
+        moving:false,
+    };
+
+    gem={
+       x:W-100,
+       y:H/2-15,
+       w:60,
+       h:60
+    };
+
+    // listen to events on the canvas
+    canvas.addEventListener("mousedown",function(){
+        console.log("Mouse pressed");
+        player.moving = true;
+    });
+
+
+    canvas.addEventListener("mouseup", function () {
+        console.log("Mouse released");
+        player.moving = false;
+    });
+
+
+
 
 }
 
@@ -55,6 +91,12 @@ function draw()
 //    pen.fillRect(box.x,box.y,box.w,box.h);
     // pen.drawImage(enemy_image,box.x, box.y, box.w, box.h);
 
+    // draw the player
+    pen.drawImage(player_image,player.x,player.y,player.w,player.h);
+
+    // draw the gem
+    pen.drawImage(gem_image,gem.x,gem.y,gem.w,gem.h);
+
     for(var i=0;i<enemy.length;i++)
     {
         pen.drawImage(enemy_image,enemy[i].x,enemy[i].y,enemy[i].w,enemy[i].h);
@@ -62,7 +104,13 @@ function draw()
 }
 
 function update()
-{  
+{    
+
+    // if the player is moving
+    if(player.moving==true)
+    {
+        player.x += player.speed;
+    }
 
     //  move the box downwards and upwards
     // update each enemy by the same logic
